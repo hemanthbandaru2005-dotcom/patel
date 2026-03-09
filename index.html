@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hospital Management System</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(120deg,#4facfe,#00f2fe);
+}
+
+/* LOGIN */
+
+.login-box{
+width:300px;
+margin:120px auto;
+background:white;
+padding:30px;
+border-radius:10px;
+text-align:center;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+.login-box input{
+width:90%;
+padding:10px;
+margin:10px;
+}
+
+button{
+padding:10px 20px;
+background:#007bff;
+border:none;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#0056b3;
+}
+
+/* LAYOUT */
+
+.sidebar{
+width:220px;
+background:#1e293b;
+height:100vh;
+position:fixed;
+padding:20px;
+display:none;
+}
+
+.sidebar h2{
+color:white;
+}
+
+.sidebar a{
+display:block;
+color:white;
+margin:15px 0;
+text-decoration:none;
+cursor:pointer;
+}
+
+.main{
+margin-left:240px;
+padding:20px;
+display:none;
+}
+
+/* CARDS */
+
+.cards{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+width:180px;
+box-shadow:0 3px 8px rgba(0,0,0,0.2);
+}
+
+/* TABLE */
+
+table{
+width:70%;
+margin-top:20px;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:10px;
+border:1px solid #ccc;
+}
+
+input,select{
+padding:10px;
+margin:5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div class="login-box" id="loginPage">
+
+<h2>Hospital Management System</h2>
+
+<input type="text" id="username" placeholder="Username">
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+</div>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar" id="sidebar">
+
+<h2>Hospital</h2>
+
+<a onclick="showPage('dashboard')">Dashboard</a>
+<a onclick="showPage('doctors')">Doctors</a>
+<a onclick="showPage('patients')">Patients</a>
+<a onclick="showPage('appointments')">Appointments</a>
+<a onclick="showPage('reports')">Reports</a>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main" id="main">
+
+<!-- DASHBOARD -->
+
+<div id="dashboard" class="page">
+
+<h1>Dashboard</h1>
+
+<div class="cards">
+
+<div class="card">
+<h3>Doctors</h3>
+<p id="doctorCount">0</p>
+</div>
+
+<div class="card">
+<h3>Patients</h3>
+<p id="patientCount">0</p>
+</div>
+
+<div class="card">
+<h3>Appointments</h3>
+<p id="appointmentCount">0</p>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- DOCTORS -->
+
+<div id="doctors" class="page" style="display:none">
+
+<h1>Doctors</h1>
+
+<input type="text" id="doctorName" placeholder="Doctor Name">
+
+<select id="specialization">
+<option>Cardiology</option>
+<option>Neurology</option>
+<option>Orthopedics</option>
+<option>Dermatology</option>
+<option>Pediatrics</option>
+</select>
+
+<button onclick="addDoctor()">Add Doctor</button>
+
+<table id="doctorTable">
+
+<tr>
+<th>Name</th>
+<th>Specialization</th>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- PATIENTS -->
+
+<div id="patients" class="page" style="display:none">
+
+<h1>Patient Registration</h1>
+
+<input type="text" id="patientName" placeholder="Patient Name">
+<input type="number" id="patientAge" placeholder="Age">
+<input type="text" id="illness" placeholder="Illness">
+
+<button onclick="addPatient()">Register Patient</button>
+
+<table id="patientTable">
+
+<tr>
+<th>Name</th>
+<th>Age</th>
+<th>Illness</th>
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- APPOINTMENTS -->
+
+<div id="appointments" class="page" style="display:none">
+
+<h1>Appointment Booking</h1>
+
+<input type="text" id="appointmentPatient" placeholder="Patient Name">
+
+<select>
+<option>Cardiologist</option>
+<option>Neurologist</option>
+<option>Orthopedic</option>
+<option>Dermatologist</option>
+</select>
+
+<input type="date">
+
+<button onclick="bookAppointment()">Book Appointment</button>
+
+</div>
+
+
+<!-- REPORTS -->
+
+<div id="reports" class="page" style="display:none">
+
+<h1>Hospital Reports</h1>
+
+<p>Total Doctors: <span id="rDoctor">0</span></p>
+<p>Total Patients: <span id="rPatient">0</span></p>
+<p>Total Appointments: <span id="rAppointment">0</span></p>
+
+</div>
+
+</div>
+
+
+<script>
+
+let doctors=0
+let patients=0
+let appointments=0
+
+
+function login(){
+
+let user=document.getElementById("username").value
+let pass=document.getElementById("password").value
+
+if(user=="admin" && pass=="1234"){
+
+document.getElementById("loginPage").style.display="none"
+document.getElementById("sidebar").style.display="block"
+document.getElementById("main").style.display="block"
+
+}
+
+else{
+alert("Invalid Login")
+}
+
+}
+
+
+function showPage(page){
+
+let pages=document.getElementsByClassName("page")
+
+for(let i=0;i<pages.length;i++){
+pages[i].style.display="none"
+}
+
+document.getElementById(page).style.display="block"
+
+}
+
+
+function addDoctor(){
+
+let table=document.getElementById("doctorTable")
+
+let name=document.getElementById("doctorName").value
+let spec=document.getElementById("specialization").value
+
+let row=table.insertRow()
+
+row.insertCell(0).innerHTML=name
+row.insertCell(1).innerHTML=spec
+
+doctors++
+
+document.getElementById("doctorCount").innerText=doctors
+document.getElementById("rDoctor").innerText=doctors
+
+}
+
+
+function addPatient(){
+
+let table=document.getElementById("patientTable")
+
+let name=document.getElementById("patientName").value
+let age=document.getElementById("patientAge").value
+let illness=document.getElementById("illness").value
+
+let row=table.insertRow()
+
+row.insertCell(0).innerHTML=name
+row.insertCell(1).innerHTML=age
+row.insertCell(2).innerHTML=illness
+
+patients++
+
+document.getElementById("patientCount").innerText=patients
+document.getElementById("rPatient").innerText=patients
+
+}
+
+
+function bookAppointment(){
+
+appointments++
+
+document.getElementById("appointmentCount").innerText=appointments
+document.getElementById("rAppointment").innerText=appointments
+
+alert("Appointment Booked")
+
+}
+
+</script>
+
+</body>
+</html>
